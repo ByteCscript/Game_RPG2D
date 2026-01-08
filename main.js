@@ -1,7 +1,6 @@
 const TILE_SIZE = 32;
 const TILESET_COLUMNS = 8;
 
-
 // Mapa RPG (20x15 tiles)
 const map = [
   [0, 1, 2, 3, 4, 5],
@@ -28,6 +27,27 @@ function drawMap() {
         TILE_SIZE,
         col * TILE_SIZE,
         row * TILE_SIZE,
+        TILE_SIZE,
+        TILE_SIZE
+      );
+    }
+  }
+}
+
+const BACKGROUND_TILE_X = 3;
+const BACKGROUND_TILE_Y = 2;
+
+function drawBackground() {
+  for (let y = 0; y < canvas.height; y += TILE_SIZE) {
+    for (let x = 0; x < canvas.width; x += TILE_SIZE) {
+      ctx.drawImage(
+        tileset,
+        BACKGROUND_TILE_X * TILE_SIZE,
+        BACKGROUND_TILE_Y * TILE_SIZE,
+        TILE_SIZE,
+        TILE_SIZE,
+        x,
+        y,
         TILE_SIZE,
         TILE_SIZE
       );
@@ -81,7 +101,7 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  drawMap();
+  drawBackground(); // mapa de fondo
 
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
