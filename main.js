@@ -35,7 +35,7 @@ function drawMap() {
 }
 
 const BACKGROUND_TILE_X = 3;
-const BACKGROUND_TILE_Y = 2;
+const BACKGROUND_TILE_Y = 0;
 
 function drawBackground() {
   for (let y = 0; y < canvas.height; y += TILE_SIZE) {
@@ -55,19 +55,30 @@ function drawBackground() {
   }
 }
 
+const playerImage = new Image();
+playerImage.src =
+  "assets/Pixels/Entities/Characters/Body_A/Animations/Walk_Base/Walk_Up-Sheet.png";
+
+const player = {
+  x: 300,
+  y: 220,
+  width: 64,
+  height: 64,
+  speed: 2,
+
+  frameX: 0,
+  frameCount: 6,
+  frameTimer: 0,
+  frameInterval: 10,
+
+  moving: false,
+};
+
 // Obtener canvas y contexto
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 // Estado del jugador
-const player = {
-  x: 300,
-  y: 220,
-  width: 32,
-  height: 32,
-  color: "red",
-  speed: 3,
-};
 
 // Teclas presionadas
 const keys = {};
@@ -83,8 +94,22 @@ window.addEventListener("keyup", (e) => {
 
 // Actualizar lógica del juego
 function update() {
+  player.moving = false;
+
   if (keys["ArrowUp"] || keys["w"]) {
     player.y -= player.speed;
+    player.moving = true;
+  }
+
+  // animación
+  if (player.moving) {
+    player.frameTimer++;
+    if (player.frameTimer >= player.frameInterval) {
+      player.frameTimer = 0;
+      player.frameX = (player.frameX + 1) % player.frameCount;
+    }
+  } else {
+    player.frameX = 0; // frame quieto
   }
   if (keys["ArrowDown"] || keys["s"]) {
     player.y += player.speed;
@@ -101,10 +126,19 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  drawBackground(); // mapa de fondo
+  drawBackground();
 
-  ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  ctx.drawImage(
+    playerImage,
+    player.frameX * player.width, // frame actual
+    0,
+    player.width,
+    player.height,
+    player.x,
+    player.y,
+    player.width,
+    player.height
+  );
 }
 
 // Game loop (corazón del juego)
