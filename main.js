@@ -1,4 +1,5 @@
 const TILE_SIZE = 32;
+const PLAYER_SCALE = 1.5;
 const TILESET_COLUMNS = 8;
 
 // Mapa RPG (20x15 tiles)
@@ -73,15 +74,15 @@ const player = {
   y: 220,
   width: 64,
   height: 64,
-  speed: 2,
+  speed: 0.8,
 
   frameX: 0,
   frameCount: 6,
   frameTimer: 0,
-  frameInterval: 10,
+  frameInterval: 14,
 
   moving: false,
-  direction: "down", // dirección inicial
+  direction: "down",
 };
 
 // Obtener canvas y contexto
@@ -139,12 +140,16 @@ function update() {
 }
 
 // Dibujar en pantalla
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   drawBackground();
 
   const sprite = playerSprites[player.direction];
+
+  const drawWidth = player.width * PLAYER_SCALE;
+  const drawHeight = player.height * PLAYER_SCALE;
 
   ctx.save();
 
@@ -156,10 +161,10 @@ function draw() {
       0,
       player.width,
       player.height,
-      -player.x - player.width,
+      -player.x - drawWidth,
       player.y,
-      player.width,
-      player.height
+      drawWidth,
+      drawHeight
     );
   } else {
     ctx.drawImage(
@@ -170,8 +175,8 @@ function draw() {
       player.height,
       player.x,
       player.y,
-      player.width,
-      player.height
+      drawWidth,
+      drawHeight
     );
   }
 
