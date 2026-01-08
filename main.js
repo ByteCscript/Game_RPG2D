@@ -55,9 +55,18 @@ function drawBackground() {
   }
 }
 
-const playerImage = new Image();
-playerImage.src =
+const playerSprites = {
+  up: new Image(),
+  down: new Image(),
+  right: new Image(),
+};
+
+playerSprites.up.src =
   "assets/Pixels/Entities/Characters/Body_A/Animations/Walk_Base/Walk_Up-Sheet.png";
+playerSprites.down.src =
+  "assets/Pixels/Entities/Characters/Body_A/Animations/Walk_Base/Walk_Down-Sheet.png";
+playerSprites.right.src =
+  "assets/Pixels/Entities/Characters/Body_A/Animations/Walk_Base/Walk_Side-Sheet.png";
 
 const player = {
   x: 300,
@@ -72,6 +81,7 @@ const player = {
   frameInterval: 10,
 
   moving: false,
+  direction: "down", // dirección inicial
 };
 
 // Obtener canvas y contexto
@@ -98,7 +108,22 @@ function update() {
 
   if (keys["ArrowUp"] || keys["w"]) {
     player.y -= player.speed;
+    player.direction = "up";
     player.moving = true;
+  } else if (keys["ArrowDown"] || keys["s"]) {
+    player.y += player.speed;
+    player.direction = "down";
+    player.moving = true;
+  } else if (keys["ArrowLeft"] || keys["a"]) {
+    player.x -= player.speed;
+    player.direction = "right"; // reutilizamos right
+    player.moving = true;
+    player.flip = true;
+  } else if (keys["ArrowRight"] || keys["d"]) {
+    player.x += player.speed;
+    player.direction = "right";
+    player.moving = true;
+    player.flip = false;
   }
 
   // animación
@@ -109,16 +134,7 @@ function update() {
       player.frameX = (player.frameX + 1) % player.frameCount;
     }
   } else {
-    player.frameX = 0; // frame quieto
-  }
-  if (keys["ArrowDown"] || keys["s"]) {
-    player.y += player.speed;
-  }
-  if (keys["ArrowLeft"] || keys["a"]) {
-    player.x -= player.speed;
-  }
-  if (keys["ArrowRight"] || keys["d"]) {
-    player.x += player.speed;
+    player.frameX = 0; // idle
   }
 }
 
@@ -128,17 +144,38 @@ function draw() {
 
   drawBackground();
 
-  ctx.drawImage(
-    playerImage,
-    player.frameX * player.width, // frame actual
-    0,
-    player.width,
-    player.height,
-    player.x,
-    player.y,
-    player.width,
-    player.height
-  );
+  const sprite = playerSprites[player.direction];
+
+  ctx.save();
+
+  if (player.flip) {
+    ctx.scale(-1, 1);
+    ctx.drawImage(
+      sprite,
+      player.frameX * player.width,
+      0,
+      player.width,
+      player.height,
+      -player.x - player.width,
+      player.y,
+      player.width,
+      player.height
+    );
+  } else {
+    ctx.drawImage(
+      sprite,
+      player.frameX * player.width,
+      0,
+      player.width,
+      player.height,
+      player.x,
+      player.y,
+      player.width,
+      player.height
+    );
+  }
+
+  ctx.restore();
 }
 
 // Game loop (corazón del juego)
