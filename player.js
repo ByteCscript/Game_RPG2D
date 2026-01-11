@@ -68,10 +68,14 @@ export function updatePlayer(keys) {
 }
 
 // 👉 Dibujo del jugador
-export function drawPlayer(ctx) {
+
+export function drawPlayer(ctx, camera) {
   const sprite = playerSprites[player.direction];
   const drawWidth = player.width * PLAYER_SCALE;
   const drawHeight = player.height * PLAYER_SCALE;
+
+  const screenX = player.x - camera.x;
+  const screenY = player.y - camera.y;
 
   ctx.save();
 
@@ -83,8 +87,8 @@ export function drawPlayer(ctx) {
       0,
       player.width,
       player.height,
-      -player.x - drawWidth,
-      player.y,
+      -screenX - drawWidth,
+      screenY,
       drawWidth,
       drawHeight
     );
@@ -95,8 +99,8 @@ export function drawPlayer(ctx) {
       0,
       player.width,
       player.height,
-      player.x,
-      player.y,
+      screenX,
+      screenY,
       drawWidth,
       drawHeight
     );
